@@ -1,44 +1,43 @@
-<!doctype html>
-<html lang="ko">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>서울 지하철 이용량 시각화</title>
+<!doctype html><html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>서울 지하철 이용량 시각화</title>
 <style>
-:root{font-family:Pretendard,"Apple SD Gothic Neo",system-ui,sans-serif;color:#25334c;background:#eff4f9;font-synthesis:none}
-*{box-sizing:border-box}
-body{margin:0}
-main{width:100%;height:100svh;min-height:390px;display:grid;grid-template-rows:minmax(0,1fr) auto;gap:12px;padding:3vh 4vw 4vh 3.4vw;background:radial-gradient(ellipse at 56% 61%,#fff8,transparent 62%),linear-gradient(164deg,#e4effc,#f0f5fa 78%);overflow:hidden}
-.stage{position:relative;display:grid;grid-template-columns:clamp(112px,14.3vw,260px) minmax(0,1fr);align-items:center;gap:2vw;isolation:isolate;min-height:0}
-.stage:before,.stage:after{content:"";position:absolute;z-index:-1;border-radius:50%;border:1px solid #b8d4ee70;pointer-events:none}
-.stage:before{width:720px;height:270px;left:-430px;bottom:10px;transform:rotate(26deg)}
-.stage:after{width:800px;height:310px;right:-450px;top:0;transform:rotate(-26deg)}
-.legend{background:#ffffffd9;border:1px solid #fff;border-radius:24px;padding:clamp(10px,1.8vw,30px);font-size:clamp(13px,1.3vw,21px);box-shadow:0 6px 24px #6e94b210;z-index:1}
-.legend b{display:block;text-align:center;border-radius:100px;background:#85a2f6;color:white;padding:8px 5px;font-size:.9em;margin-bottom:20px}
-.key{display:flex;align-items:center;gap:10px;margin:16px 6px}
-.swatch{width:14px;height:12px;border-radius:4px;background:#909ed4}
-.swatch.green{width:12px;border-radius:50%;background:#9acbac}
-.transfer{display:inline-grid;place-items:center;width:14px;height:12px;border-radius:4px;background:#909ed4}
-.transfer:after{content:"";width:6px;height:6px;border-radius:50%;background:#9acbac;border:1px solid white}
-svg{display:block;width:100%;height:100%;min-height:0;overflow:visible}
-.edge{fill:none;stroke-width:1;vector-effect:non-scaling-stroke}
-.node text{font-weight:650;letter-spacing:-.05em;fill:#24324b;text-anchor:middle;dominant-baseline:central;pointer-events:none}
-.transport{display:grid;grid-template-columns:44px minmax(0,1fr) auto;align-items:center;gap:24px;width:72%;margin-left:19%;padding:18px 30px;background:#ffffffdf;border:1px solid white;border-radius:100px;box-shadow:0 8px 26px #708eb319}
-button{width:44px;height:44px;border:none;border-radius:50%;background:#93aefd;color:white;font-size:18px;cursor:pointer}
-button:focus-visible,input:focus-visible{outline:3px solid #345cbc;outline-offset:3px}
-input{appearance:none;display:block;width:100%;height:8px;margin:0;cursor:pointer;border-radius:12px;background:linear-gradient(to right,#97b1d8 var(--progress,0%),#c4d3e6 var(--progress,0%))}
-input::-webkit-slider-thumb{appearance:none;width:20px;height:20px;border:2px solid #adc7f4;border-radius:50%;background:white}
-input::-moz-range-thumb{width:16px;height:16px;border:2px solid #adc7f4;border-radius:50%;background:white}
-output{font-size:16px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
-@media(max-width:650px){main{padding:14px 14px 20px}.stage{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr);gap:4px}.legend{justify-self:start;display:flex;align-items:center;gap:8px;padding:3px 12px}.legend b{display:none}.key{font-size:11px;margin:8px 3px}.transport{width:100%;margin:0;gap:12px;padding:10px 15px;grid-template-columns:36px minmax(0,1fr) auto}.transport button{width:36px;height:36px}output{font-size:13px}}
-</style>
-</head>
-<body><main>
-<div class="stage">
-<aside class="legend" aria-label="노선 범례"><b>노선</b><div class="key"><i class="swatch"></i>1호선</div><div class="key"><i class="swatch green"></i>2호선</div><div class="key"><i class="transfer"></i>환승역</div></aside>
-<svg id="chart" viewBox="0 0 1040 600" role="img" aria-label="시간대별 서울 지하철 이용량 버블 차트">
-<defs><radialGradient id="line1" cx="43%" cy="37%" r="73%"><stop stop-color="#b3c0ed"/><stop offset=".78" stop-color="#909ed4"/><stop offset="1" stop-color="#909ed4" stop-opacity=".57"/></radialGradient><radialGradient id="line2" cx="43%" cy="37%" r="73%"><stop stop-color="#c2e4d0"/><stop offset=".78" stop-color="#9acbac"/><stop offset="1" stop-color="#9acbac" stop-opacity=".57"/></radialGradient></defs>
-<g id="edges"></g><g id="nodes"></g></svg>
-</div>
-<div class="transport"><button id="play" type="button" aria-label="재생">▶</button><input id="time" type="range" min="0" max="17" step="any" value="2" aria-label="시간대"><output id="clock" for="time">08:00</output></div>
-</main><script src="data.js"></script><script src="main.js"></script></body></html>
+*{box-sizing:border-box}body{margin:0;font-family:Pretendard,"Apple SD Gothic Neo",system-ui,sans-serif;color:#344760}main{height:100svh;min-height:360px;overflow:hidden;padding:3vh 4vw 4vh 3.4vw;display:grid;grid-template-rows:minmax(0,1fr) auto;gap:12px;background:radial-gradient(ellipse at 56% 61%,#fff8,transparent 62%),linear-gradient(164deg,#e4effc,#f0f5fa 78%)}.stage{position:relative;display:grid;grid-template-columns:clamp(112px,14.3vw,260px) minmax(0,1fr);align-items:center;gap:2vw;isolation:isolate;min-height:0}.stage:before,.stage:after{content:"";position:absolute;z-index:-1;border:1px solid #b8d4ee70;border-radius:50%;width:720px;height:300px;pointer-events:none}.stage:before{left:-420px;bottom:0;transform:rotate(26deg)}.stage:after{right:-450px;top:0;transform:rotate(-26deg)}aside,.transport{background:#ffffffd9;border:1px solid #fff;box-shadow:0 8px 26px #708eb319}aside{border-radius:24px;padding:clamp(10px,1.8vw,30px);font-size:clamp(13px,1.3vw,21px)}aside b{display:block;text-align:center;border-radius:100px;background:#85a2f6;color:#fff;padding:8px 5px;font-size:.9em;margin-bottom:20px}.key{display:flex;align-items:center;gap:10px;margin:16px 6px}.key i{display:grid;place-items:center;width:14px;height:12px;border-radius:4px;background:#909ed4}.key .two{width:12px;border-radius:50%;background:#9acbac}.key .transfer:after{content:"";width:6px;height:6px;border:1px solid white;border-radius:50%;background:#9acbac}svg{display:block;width:100%;height:100%;min-height:0}svg text{text-anchor:middle;dominant-baseline:central;font-weight:650;fill:#24324b;pointer-events:none}.transport{display:grid;grid-template-columns:44px minmax(0,1fr) auto;align-items:center;gap:24px;width:72%;margin-left:19%;padding:18px 30px;border-radius:100px}button{width:44px;height:44px;border:0;border-radius:50%;background:#93aefd;color:white;font-size:18px;cursor:pointer}input{appearance:none;width:100%;height:8px;margin:0;cursor:pointer;border-radius:12px;background:linear-gradient(to right,#97b1d8 var(--progress,0%),#c4d3e6 var(--progress,0%))}input::-webkit-slider-thumb{appearance:none;width:20px;height:20px;border:2px solid #adc7f4;border-radius:50%;background:white}input::-moz-range-thumb{width:16px;height:16px;border:2px solid #adc7f4;border-radius:50%;background:white}output{font-weight:700;font-variant-numeric:tabular-nums}@media(max-width:650px){main{padding:14px}.stage{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr)}aside{justify-self:start;display:flex;gap:9px;padding:3px 10px}aside b{display:none}.key{margin:7px 3px;font-size:11px}.transport{width:100%;margin:0;gap:12px;padding:10px 15px}}
+</style><main><div class="stage"><aside aria-label="노선 범례"><b>노선</b><div class="key"><i></i>1호선</div><div class="key"><i class="two"></i>2호선</div><div class="key"><i class="transfer"></i>환승역</div></aside><svg viewBox="0 0 1040 600" role="img" aria-label="서울 지하철 시간대별 이용량"><defs><radialGradient id="g1" cx="43%" cy="37%" r="73%"><stop stop-color="#b3c0ed"/><stop offset=".78" stop-color="#909ed4"/><stop offset="1" stop-color="#909ed4" stop-opacity=".57"/></radialGradient><radialGradient id="g2" cx="43%" cy="37%" r="73%"><stop stop-color="#c2e4d0"/><stop offset=".78" stop-color="#9acbac"/><stop offset="1" stop-color="#9acbac" stop-opacity=".57"/></radialGradient></defs><g id="edges"></g><g id="nodes"></g></svg></div><div class="transport"><button id="play" aria-label="재생">▶</button><input id="time" type="range" min="0" max="17" value="2" step="any" aria-label="시간대"><output id="clock" for="time">08:00</output></div></main>
+<script>
+const DATA={"routes": [["서울역", "시청", "종각", "종로3가", "종로5가", "동대문"], ["신촌", "이대", "아현", "충정로", "시청", "을지로입구", "을지로3가", "을지로4가"]], "stations": [{"name": "서울역", "line": 1, "transfer": false, "values": [2929.84, 7515.55, 13731.13, 9403.06, 6407.32, 6673.58, 7450.48, 7156.84, 6422.45, 7773.52, 8633.03, 12283.87, 14280.26, 8208.84, 5906.0, 6029.06, 4362.52, 2288.68]}, {"name": "시청", "line": 2, "transfer": true, "values": [1908.39, 5917.77, 16037.39, 7038.0, 3612.19, 3738.87, 3668.26, 4034.61, 4024.0, 4396.03, 5135.65, 8671.61, 13414.23, 4998.68, 4040.03, 3561.32, 2339.39, 951.29]}, {"name": "종각", "line": 1, "transfer": false, "values": [1525.23, 4490.81, 10012.19, 5337.97, 2620.9, 2821.23, 2821.9, 3090.68, 3113.03, 3444.39, 4113.23, 7107.42, 9251.19, 3981.23, 3253.48, 3136.52, 2251.97, 988.26]}, {"name": "종로3가", "line": 1, "transfer": false, "values": [629.52, 1196.55, 2684.13, 2691.42, 2541.42, 3098.81, 3344.94, 3195.61, 3139.9, 3169.45, 3427.29, 3966.0, 4175.87, 2325.06, 1840.19, 1866.68, 1416.23, 683.68]}, {"name": "종로5가", "line": 1, "transfer": false, "values": [720.26, 1702.61, 3512.13, 2687.26, 2785.29, 3080.1, 3084.65, 3138.84, 3262.97, 3136.74, 3305.94, 4014.42, 4050.97, 2110.77, 1417.65, 1214.16, 840.58, 310.26]}, {"name": "동대문", "line": 1, "transfer": false, "values": [540.58, 912.71, 1382.32, 1406.42, 1355.68, 1506.23, 1527.84, 1560.65, 1530.42, 1546.97, 1579.35, 1580.58, 1525.06, 1266.55, 1032.84, 960.0, 861.19, 519.77]}, {"name": "신촌", "line": 2, "transfer": false, "values": [985.19, 2422.13, 4629.55, 4345.84, 3440.32, 3583.61, 4044.74, 4588.42, 4193.06, 4379.74, 4973.13, 6079.23, 7038.29, 4694.97, 3842.58, 3797.48, 3528.23, 1831.16]}, {"name": "이대", "line": 2, "transfer": false, "values": [581.32, 1470.61, 2888.94, 1957.71, 1448.61, 1443.29, 1772.39, 1725.52, 1574.03, 1784.16, 1948.61, 2555.0, 2886.1, 1899.97, 1412.81, 1399.16, 1304.45, 722.26]}, {"name": "아현", "line": 2, "transfer": false, "values": [585.48, 1433.9, 2165.48, 1319.58, 953.61, 890.71, 988.68, 1028.42, 951.35, 1107.1, 1259.1, 1497.77, 1848.16, 1285.65, 922.61, 800.16, 696.26, 343.52]}, {"name": "충정로", "line": 2, "transfer": false, "values": [466.74, 1466.1, 2939.58, 1484.13, 794.65, 750.42, 799.13, 858.39, 801.61, 859.35, 997.23, 1763.0, 2357.06, 1008.71, 736.65, 679.48, 547.26, 305.19]}, {"name": "을지로입구", "line": 2, "transfer": false, "values": [1331.23, 5015.26, 12403.55, 6535.65, 4245.94, 4055.65, 3998.97, 4443.58, 4493.68, 4888.26, 5654.84, 8664.9, 12348.42, 6260.55, 5606.42, 4044.61, 3225.52, 1454.52]}, {"name": "을지로3가", "line": 2, "transfer": false, "values": [954.29, 3025.26, 6638.9, 2987.13, 1876.81, 1889.48, 1869.13, 1997.87, 2053.52, 2181.19, 2785.19, 4733.87, 6577.0, 2884.9, 2142.65, 2197.94, 1846.58, 1019.71]}, {"name": "을지로4가", "line": 2, "transfer": false, "values": [592.32, 1485.39, 3079.29, 1850.16, 1471.74, 1550.9, 1487.1, 1493.97, 1498.55, 1571.94, 1771.61, 2838.81, 3088.26, 1494.03, 1017.81, 915.71, 738.77, 398.81]}]};
+const $=id=>document.getElementById(id), colors=['#909ed4','#9acbac'];
+const add=(tag,into)=>into.appendChild(document.createElementNS('http://www.w3.org/2000/svg',tag));
+const attr=(el,obj)=>Object.entries(obj).forEach(([k,v])=>el.setAttribute(k,v));
+const anchor=[[285,185],[546,268],[459,159],[586,131],[711,165],[795,263],[225,379],[330,426],[405,342],[466,253],[643,339],[750,398],[833,346]];
+const axes=Array.from({length:16},(_,i)=>[Math.cos(i*Math.PI/16),Math.sin(i*Math.PI/16)]);
+const peak=Math.max(...DATA.stations.flatMap(s=>s.values)),time=$('time'),play=$('play'),clock=$('clock');
+let t=2,playing=false,previous=performance.now(),bank=0;
+const area=(s)=>{const i=Math.floor(t),j=Math.min(17,i+1);return Math.PI*86**2*(s.values[i]+(s.values[j]-s.values[i])*(t-i))/peak};
+const nodes=DATA.stations.map((s,i)=>{
+ const el=add('g',$('nodes')),title=add('title',el),shape=add(s.line===1?'rect':'circle',el);attr(shape,{fill:'url(#g'+s.line+')',stroke:colors[s.line-1],'stroke-width':1.25});
+ if(s.transfer)attr(add('circle',el),{r:6,fill:colors[s.line===1?1:0],stroke:'#fff','stroke-width':1.25});
+ const label=add('text',el);label.textContent=s.name;if(s.transfer)attr(label,{y:18});
+ return {...s,el,shape,title,label,x:anchor[i][0],y:anchor[i][1],vx:0,vy:0,a:area(s)};
+});
+const by=new Map(nodes.map(n=>[n.name,n]));
+const edges=DATA.routes.flatMap((line,i)=>line.slice(1).map((name,j)=>{const path=add('path',$('edges'));attr(path,{fill:'none',stroke:colors[i],'stroke-width':1,'vector-effect':'non-scaling-stroke','stroke-linecap':'round'});return {a:by.get(line[j]),b:by.get(name),path,k:i?.14:-.14};}));
+function advance(){
+ for(const n of nodes){n.a+=(area(n)-n.a)*.22;
+ if(n.line===1){n.h=Math.sqrt(n.a/(1.44-(4-Math.PI)*.31**2));n.w=n.h*1.44;n.r=n.h*.31;}else{n.r=Math.sqrt(n.a/Math.PI);n.w=n.h=2*n.r;}
+ n.support=axes.map(([x,y])=>(n.w/2-n.r)*Math.abs(x)+(n.h/2-n.r)*Math.abs(y)+n.r);
+ n.vx=(n.vx+(520-n.x)*.014)*.72;n.vy=(n.vy+(300-n.y)*.014)*.72;n.x+=n.vx;n.y+=n.vy;}
+ for(let p=0;p<8;p++)for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++){
+ const a=nodes[i],b=nodes[j],dx=b.x-a.x,dy=b.y-a.y;if(Math.abs(dx)>(a.w+b.w)/2+8||Math.abs(dy)>(a.h+b.h)/2+8)continue;
+ let depth=Infinity,k=0,sign=1;for(let l=0;l<axes.length;l++){const [x,y]=axes[l],d=dx*x+dy*y,m=a.support[l]+b.support[l]+8-Math.abs(d);if(m<=0){depth=0;break;}if(m<depth){depth=m;k=l;sign=d<0?-1:1;}}if(depth<=0)continue;const [x,y]=axes[k],v=depth*.505*sign;a.x-=x*v;a.y-=y*v;b.x+=x*v;b.y+=y*v;}
+}
+function draw(){
+ for(const n of nodes){attr(n.el,{transform:'translate('+n.x+' '+n.y+')'});attr(n.shape,n.line===1?{x:-n.w/2,y:-n.h/2,width:n.w,height:n.h,rx:n.r}:{r:n.r});attr(n.label,{'font-size':Math.max(11,Math.min(15,(n.w-5)/(n.name.length*.87)))});const i=Math.floor(t);n.title.textContent=n.name+' · '+(i+6)+'–'+(i+7)+'시 일평균 '+Math.round(n.values[i]).toLocaleString('ko-KR')+'건';}
+ for(const {a,b,path,k}of edges){const x=b.x-a.x,y=b.y-a.y;attr(path,{d:'M '+a.x+' '+a.y+' C '+[a.x+x*.32-y*k,a.y+y*.32+x*k,a.x+x*.68-y*k,a.y+y*.68+x*k,b.x,b.y].join(' ')});}
+}
+function setTime(v){t=Math.max(0,Math.min(17,v));time.value=t;time.style.setProperty('--progress',t/17*100+'%');const m=Math.floor((t+6)*60+1e-7);clock.textContent=String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');time.setAttribute('aria-valuetext',clock.textContent);}
+function setPlay(v){playing=v;play.textContent=v?'Ⅱ':'▶';play.setAttribute('aria-label',v?'일시 정지':'재생');}
+play.addEventListener('click',()=>{if(!playing&&t===17)setTime(0);setPlay(!playing);});
+time.addEventListener('input',()=>{setPlay(false);setTime(Number(time.value));});
+for(let i=0;i<160;i++)advance();setTime(2);draw();
+function frame(now){const dt=Math.max(0,Math.min(80,now-previous));previous=now;if(playing){setTime(t+dt/1050);if(t===17)setPlay(false);}bank+=dt;while(bank>=16.666){advance();bank-=16.666;}draw();requestAnimationFrame(frame);}
+requestAnimationFrame(frame);
+</script></html>
