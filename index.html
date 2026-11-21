@@ -186,11 +186,9 @@ const ASSETS={"sidebar-line-1.svg":"data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZU
     $('hover-count').title='현재 시간대의 승차·하차 합계 · 2025년 7월 일평균 기준';
   }
   function moveTooltip(n){
-    const matrix=n.group.getScreenCTM();
-    if(!matrix)return;
-    const top=matrix.f-n.baseBoundY*Math.hypot(matrix.c,matrix.d);
-    tooltip.style.left=Math.max(8,Math.min(innerWidth-tooltip.offsetWidth-8,matrix.e-tooltip.offsetWidth/2))+'px';
-    tooltip.style.top=Math.max(8,top-tooltip.offsetHeight-10)+'px';
+    const bounds=n.shape.getBoundingClientRect();
+    tooltip.style.left=Math.max(8,Math.min(innerWidth-tooltip.offsetWidth-8,bounds.left+bounds.width/2-tooltip.offsetWidth/2))+"px";
+    tooltip.style.top=Math.max(8,bounds.top-tooltip.offsetHeight-10)+"px";
   }
   for(const n of nodes){
       const halo=n.shape.cloneNode(false);
