@@ -197,7 +197,7 @@ const ASSETS={"sidebar-line-1.svg":"data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZU
       halo.style.filter='saturate(2) brightness(.85)';
       halo.setAttribute('stroke','none');halo.setAttribute('visibility','hidden');
       n.group.insertBefore(halo,n.shape);n.hoverHalo=halo;
-      n.group.addEventListener('pointerenter',()=>{halo.setAttribute('fill',DATA.colors[n.primaryLine-1]);halo.setAttribute('visibility','visible');});
+      n.group.addEventListener('pointerenter',()=>{halo.setAttribute('fill',stationColor(DATA.colors[n.primaryLine-1]));halo.setAttribute('visibility','visible');});
       n.group.addEventListener('pointerleave',()=>{halo.setAttribute('visibility','hidden');});
       let press=null;
       n.group.addEventListener('pointerdown',e=>{press={x:e.clientX,y:e.clientY};});
@@ -235,16 +235,26 @@ const ASSETS={"sidebar-line-1.svg":"data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZU
     for(const e of connections)e.path.style.opacity=!enabledLines.has(e.line)?'0':line===null||e.line===line?'1':'0.08';
     for(let i=0;i<legendRows.length;i++)legendRows[i].style.opacity=!enabledLines.has(i+1)?'0.4':line===null||i+1===line?'1':'0.45';
   }
+  function stationColor(color){
+    if(hour!==0&&hour!==finalStep)return color;
+    const rgb=color.startsWith('#')?color.slice(1).match(/../g).map(v=>parseInt(v,16)):color.match(/[\d.]+/g).map(Number);
+    const gray=Math.round(rgb[0]*.2126+rgb[1]*.7152+rgb[2]*.0722);
+    return 'rgb('+gray+' '+gray+' '+gray+')';
+  }
+  function paintStation(n){
+    const color=DATA.colors[n.primaryLine-1];
+    n.shape.setAttribute('stroke',stationColor(color));
+    n.colorStops.forEach((stop,i)=>{
+      const c=n.fills[0].gradientStops[i].color;
+      stop.setAttribute('stop-color',stationColor(n.primaryLine===n.line?'rgb('+[c.r,c.g,c.b].map(v=>v*255).join(' ')+')':color));
+    });
+    for(const m of n.markerNodes)m.el.setAttribute('fill',stationColor(DATA.colors[m.line-1]));
+    n.hoverHalo.setAttribute('fill',stationColor(color));
+  }
   function updateTransfers(n,immediate=false){
     const remaining=[...n.lines].filter(line=>enabledLines.has(line));
     const primary=enabledLines.has(n.line)?n.line:remaining[0]??n.line;
-    if(primary!==n.primaryLine){
-      n.primaryLine=primary;n.shape.setAttribute('stroke',DATA.colors[primary-1]);
-      n.colorStops.forEach((stop,i)=>{
-        const c=n.fills[0].gradientStops[i].color;
-        stop.setAttribute('stop-color',primary===n.line?'rgb('+[c.r,c.g,c.b].map(v=>v*255).join(' ')+')':DATA.colors[primary-1]);
-      });
-    }
+    n.primaryLine=primary;paintStation(n);
     const extras=remaining.filter(line=>line!==primary),diameter=n.markerDiameter;
     for(const m of n.markerNodes){
       const index=extras.indexOf(m.line);
@@ -399,14 +409,16 @@ const ASSETS={"sidebar-line-1.svg":"data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZU
     settleMs=0;layoutPaused=false;
     hour=Math.max(0,Math.min(finalStep,next));
     const isClosed=hour===0||hour===finalStep;
-    $('viewport').style.filter=isClosed?'grayscale(1)':'none';
-    $('legend').style.filter=isClosed?'grayscale(1)':'none';
+    $('viewport').style.filter='none';
+    $('legend').style.filter='none';
     const bucket=hour-1,label=hour===0?'운행 전':hour===finalStep?'운행 후':bucket===0?'AM 6:00 이전':bucket===DATA.labels.length-1?'AM 12:00 이후':formatHour(bucket+5);
     for(const n of nodes){
       n.startScale=n.dataScale;n.targetScale=isClosed?restSize/Math.max(n.w,n.h):sizeScale(n,n.values[bucket]);
       if(immediate){n.dataScale=n.targetScale;n.scale=n.dataScale*n.visibility;}
       n.title.textContent=n.name+' · '+label+(isClosed?' · 운행 전후 연출':' · 일평균 승하차 '+Math.round(n.values[bucket]).toLocaleString('ko-KR')+'건');
+      paintStation(n);
     }
+    for(const e of connections)e.path.setAttribute('stroke',stationColor(DATA.colors[e.line-1]));
     const growing=nodes.some(n=>n.targetScale>n.startScale+1e-6);
     morphMs=growing?growMs:shrinkMs;duration=morphMs+holdMs;
     changeMs=immediate?morphMs:0;clock.textContent=label;
